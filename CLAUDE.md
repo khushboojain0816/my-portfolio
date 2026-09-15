@@ -50,16 +50,24 @@ are **placeholder examples** — replace them with real projects, and swap the
 ## Contact form
 
 `ContactForm.tsx` is a client component with local validation (required
-name/email/message, basic email format check) and a simulated submit
-(a delayed `Promise` standing in for a network call) — **no backend is wired
-up yet**, so submissions are not actually sent anywhere. To make it
-functional, either:
+name/email/message, basic email format check) that submits to
+`POST /api/contact` (`src/app/api/contact/route.ts`), which re-validates the
+payload server-side and sends an email via [Resend](https://resend.com).
 
-- Add a Next.js API route (e.g. `src/app/api/contact/route.ts`) that sends
-  an email (Resend, SendGrid, Nodemailer, etc.) and call it via `fetch` in
-  `handleSubmit`, or
-- Point the form at a form backend service (Formspree, Getform, Web3Forms)
-  and adjust `handleSubmit` accordingly.
+**Setup required to actually send email:**
+
+1. Create a free account at resend.com and generate an API key.
+2. Copy `.env.example` to `.env.local` and set `RESEND_API_KEY`.
+3. (Optional) Verify your own sending domain in Resend and set
+   `CONTACT_FROM_EMAIL` to an address on that domain — otherwise the route
+   falls back to Resend's shared `onboarding@resend.dev` test sender, which
+   works but is rate-limited and clearly not your own domain.
+4. (Optional) Set `CONTACT_TO_EMAIL` to override where messages are
+   delivered — defaults to the email in `src/data/site.ts`.
+
+Without `RESEND_API_KEY` set, the API route returns a 500 with a friendly
+error message instead of throwing, and the form surfaces that message to the
+visitor.
 
 ## Design notes
 

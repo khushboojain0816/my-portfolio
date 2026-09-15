@@ -8,6 +8,7 @@ type Status = "idle" | "submitting" | "success" | "error";
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState<string | null>(null);
 
   function validate(formData: FormData) {
     const nextErrors: Record<string, string> = {};
@@ -36,14 +37,29 @@ export default function ContactForm() {
     if (Object.keys(nextErrors).length > 0) return;
 
     setStatus("submitting");
+    setServerError(null);
     try {
-      // NOTE: No backend is wired up yet. Replace this with a real API
-      // call (e.g. POST to an API route or a service like Formspree/Resend)
-      // to actually deliver messages.
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          message: formData.get("message"),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        setServerError(data?.error || "Something went wrong. Please try again.");
+        setStatus("error");
+        return;
+      }
+
       setStatus("success");
       form.reset();
     } catch {
+      setServerError("Something went wrong. Please try again.");
       setStatus("error");
     }
   }
@@ -147,7 +163,7 @@ export default function ContactForm() {
         )}
         {status === "error" && (
           <p className="text-sm font-medium text-red-600 dark:text-red-400">
-            Something went wrong. Please try again.
+            {serverError || "Something went wrong. Please try again."}
           </p>
         )}
       </form>

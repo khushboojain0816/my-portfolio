@@ -1,4 +1,4 @@
-import type { Project } from "@/data/site";
+import type { Project } from "@/types/project";
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (

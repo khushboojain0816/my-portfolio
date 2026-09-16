@@ -1,7 +1,9 @@
-import { projects } from "@/data/site";
+import { getPublicProjects } from "@/lib/projects";
 import ProjectCard from "@/components/ProjectCard";
 
-export default function Projects() {
+export default async function Projects() {
+  const projects = await getPublicProjects();
+
   return (
     <section
       id="projects"
@@ -11,13 +13,12 @@ export default function Projects() {
         Projects
       </h2>
       <p className="mt-3 max-w-2xl text-base text-zinc-600 sm:text-lg dark:text-zinc-400">
-        A few examples of things I&apos;ve built. Replace these with your own
-        projects.
+        A few examples of things I&apos;ve built.
       </p>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
-          <ProjectCard key={project.title} project={project} />
+          <ProjectCard key={project.id} project={project} />
         ))}
       </div>
     </section>

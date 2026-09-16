@@ -26,37 +26,6 @@ export const about = {
   ],
 };
 
-export type Project = {
-  title: string;
-  description: string;
-  tags: string[];
-  liveUrl?: string;
-  repoUrl?: string;
-};
-
-export const projects: Project[] = [
-  {
-    title: "Task Flow",
-    description:
-      "A drag-and-drop task management app with boards, labels, and due dates, built to help small teams stay organized.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
-    liveUrl: "#",
-    repoUrl: "#",
-  },
-  {
-    title: "Weather Now",
-    description:
-      "A minimal weather dashboard that shows real-time conditions and a 5-day forecast for any city, with saved favorites.",
-    tags: ["React", "REST API", "CSS"],
-    liveUrl: "#",
-    repoUrl: "#",
-  },
-  {
-    title: "Recipe Book",
-    description:
-      "A searchable recipe collection with filtering by cuisine and ingredients, plus a personal favorites list saved locally.",
-    tags: ["Next.js", "Node.js", "MongoDB"],
-    liveUrl: "#",
-    repoUrl: "#",
-  },
-];
+// Project data now lives in Supabase and is managed via /admin.
+// See src/lib/projects.ts for data access and the fallback demo projects
+// used when Supabase isn't configured yet.

@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import type { Project } from "@/types/project";
 
 type Props = {
@@ -17,13 +18,11 @@ export default function ProjectForm({ mode, project }: Props) {
   const [liveUrl, setLiveUrl] = useState(project?.liveUrl ?? "");
   const [repoUrl, setRepoUrl] = useState(project?.repoUrl ?? "");
   const [sortOrder, setSortOrder] = useState(project?.sortOrder ?? 0);
-  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSaving(true);
-    setError(null);
 
     const payload = {
       title,
@@ -49,15 +48,16 @@ export default function ProjectForm({ mode, project }: Props) {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        setError(data?.error || "Failed to save project.");
+        toast.error(data?.error || "Failed to save project.");
         setSaving(false);
         return;
       }
 
+      toast.success(mode === "create" ? "Project created." : "Project updated.");
       router.push("/admin");
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
       setSaving(false);
     }
   }
@@ -156,8 +156,6 @@ export default function ProjectForm({ mode, project }: Props) {
         />
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">Lower numbers show first.</p>
       </div>
-
-      {error && <p className="text-sm font-medium text-red-600 dark:text-red-400">{error}</p>}
 
       <div className="flex gap-3">
         <button

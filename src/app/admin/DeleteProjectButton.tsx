@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function DeleteProjectButton({ id, title }: { id: string; title: string }) {
   const router = useRouter();
@@ -15,10 +16,13 @@ export default function DeleteProjectButton({ id, title }: { id: string; title: 
       const response = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        alert(data?.error || "Failed to delete project.");
+        toast.error(data?.error || "Failed to delete project.");
         return;
       }
+      toast.success(`"${title}" deleted.`);
       router.refresh();
+    } catch {
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setDeleting(false);
     }
